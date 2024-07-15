@@ -60,13 +60,17 @@ app.post("/todo", async (req, res) => {
 
 app.put("/todo/:id", async (req, res) => {
   try {
+    const { text, completed } = req.body;
     const todo = await Todo.findByIdAndUpdate(
       req.params.id,
       {
-        $set: { completed: req.body.completed },
+        $set: { text, completed },
       },
       { new: true }
     );
+    if (!todo) {
+      return res.status(404).send("Todo не найден.");
+    }
     res.json(todo);
   } catch (error) {
     res.status(500).send(error);
